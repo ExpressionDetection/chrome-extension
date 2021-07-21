@@ -1,9 +1,11 @@
 
 ## Run the app locally:
+```
 cd micro-facial-impressions
 npm run dev
+```
 
-Make sure you're running on port 3000 or change the url from the chrome extension.
+**Make sure you're running on port 3000 or change the url from the chrome extension.**
 
 ## To run the chrome extension Locally:
 - Navigate to chrome://extensions
