@@ -1,0 +1,34 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/micro-facial-impressions/node_modules
+/micro-facial-impressions/.pnp
+/micro-facial-impressions/.pnp.js
+
+# testing
+/micro-facial-impressions/coverage
+
+# next.js
+/micro-facial-impressions/.next/
+/micro-facial-impressions/out/
+
+# production
+/micro-facial-impressions/build
+
+# misc
+/micro-facial-impressions/.DS_Store
+/micro-facial-impressions/*.pem
+
+# debug
+/micro-facial-impressions/npm-debug.log*
+/micro-facial-impressions/yarn-debug.log*
+/micro-facial-impressions/yarn-error.log*
+
+# local env files
+/micro-facial-impressions/.env.local
+/micro-facial-impressions/.env.development.local
+/micro-facial-impressions/.env.test.local
+/micro-facial-impressions/.env.production.local
+
+# vercel
+/micro-facial-impressions/.vercel
