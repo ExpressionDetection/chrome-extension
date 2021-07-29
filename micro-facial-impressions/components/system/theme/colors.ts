@@ -2,14 +2,23 @@ const theme = (dark = false): any => ({
     dark,
     get primary() {
       return {
-        default: this.dark ? "#375a7f" : "#007bff",
+        default: this.dark ? "#375a7f" : "#967CFF",
         dark: "#375a7f",
         light: "#007bff",
-        hover: this.dark ? "#2f4d6c" : "#0069d9",
+        hover: this.dark ? "#2f4d6c" : "#967CFF",
         contrast: "#f8f9fa",
       };
     },
     get secondary() {
+      return {
+        default: this.dark ? "#444444" : "#00A3FF",
+        dark: "#444444",
+        light: "#6c757d",
+        hover: this.dark ? "#3a3a3a" : "#00A3FF",
+        contrast: "#f8f9fa",
+      };
+    },
+    get terciary() {
       return {
         default: this.dark ? "#444444" : "#6c757d",
         dark: "#444444",

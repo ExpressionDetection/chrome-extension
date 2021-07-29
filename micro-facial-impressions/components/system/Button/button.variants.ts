@@ -65,6 +65,21 @@ export const styling = variant({
         }
       }
     },
+    get terciary(){
+      return {
+        ...this.base,
+        backgroundColor: 'terciary.default',
+        borderColor: 'terciary.default',
+        color: 'terciary.contrast',
+        '&:hover, &.hover': {
+          backgroundColor: 'terciary.hover',
+          borderColor: 'terciary.hover'
+        },
+        '&:focus, &.focus': {
+          boxShadow: (theme: Theme) => `0 0 0 .2rem ${theme.colors?.terciary?.default ?? ''}75`
+        }
+      }
+    },
     get success () {
       return {
         ...this.base,

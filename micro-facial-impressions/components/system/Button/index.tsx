@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 import {
   border,
   color,
@@ -7,17 +7,17 @@ import {
   position,
   space,
   system,
-  typography
-} from 'styled-system'
-import { ButtonProps } from './button.types'
-import { sizes, styling, outline, text, block } from './button.variants'
+  typography,
+} from "styled-system";
+import { ButtonProps } from "./button.types";
+import { sizes, styling, outline, text, block } from "./button.variants";
 
 export const Button: React.FC<ButtonProps> = styled.button<ButtonProps>`
+  ${styling}
   ${layout}
   ${position}
   ${space}
   ${typography}
-  ${styling}
   ${color}
   ${border}
   ${fontSize}
@@ -26,6 +26,6 @@ export const Button: React.FC<ButtonProps> = styled.button<ButtonProps>`
   ${outline}
   ${text}
   ${block}
-`
+`;
 
-export default Button
+export default Button;

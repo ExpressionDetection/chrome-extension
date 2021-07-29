@@ -33,14 +33,14 @@
   top: 50%;
   transform: translateY(-50%);
   right: -100px;
-  background: #75E6DA;
+  background: #967CFF;
   display: grid;
   grid-template-columns: 55px 27px;
   width: 94px;
   height: 65px;
   padding: 0 0 0 9px;
   border-radius: 10px 0px 0px 10px;
-  background-color: #75E6DA;
+  background-color: #967CFF;
   gap: 5px;
   z-index: 999;
   cursor: pointer;

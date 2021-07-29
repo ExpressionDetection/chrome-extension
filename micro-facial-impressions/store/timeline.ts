@@ -1,44 +1,85 @@
 import { atom, PrimitiveAtom } from "jotai";
 
-const b64toBlob = (b64Data: string, contentType = "", sliceSize = 512) => {
-  const byteCharacters = atob(b64Data);
-  const byteArrays = [];
+export const TOGGLE_LISTENER = Symbol();
 
-  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-    const slice = byteCharacters.slice(offset, offset + sliceSize);
-
-    const byteNumbers = new Array(slice.length);
-    for (let i = 0; i < slice.length; i++) {
-      byteNumbers[i] = slice.charCodeAt(i);
-    }
-
-    const byteArray = new Uint8Array(byteNumbers);
-    byteArrays.push(byteArray);
-  }
-
-  const blob = new Blob(byteArrays, { type: contentType });
-  return blob;
-};
-
-export function atomWithMessage<Value>(
+export function atomWithListener<Value>(
   initialValue: Value
-): PrimitiveAtom<Value> {
-  const baseAtom = atom(initialValue);
+  ): PrimitiveAtom<Value> {
+  const isListening = atom(true);
+  const valueAtom = atom(initialValue);
+
+  const listener = (event: any, set) => {
+    if (event.data.type === "micro-facial") {
+      set((prev) => [
+        ...prev,
+        {
+          type: "impression",
+          payload: { image: event.data.frame, date: new Date() },
+        },
+      ]);
+    }
+  };
+  let listenerWrapper: (event: any) => void;
+
+  const baseAtom = atom(
+    (get) => get(valueAtom),
+    (get, set, update: any | typeof TOGGLE_LISTENER) => {
+      if (update === TOGGLE_LISTENER) {
+        console.log(
+          "REMOVING EVENT LISTENER ==============>",
+          get(isListening),
+          listenerWrapper
+        );
+        if (get(isListening)) {
+          window.removeEventListener("message", listenerWrapper, false);
+        } else {
+          window.addEventListener("message", listenerWrapper, false);
+        }
+        set(isListening, (prev) => !prev);
+      } else {
+        set(
+          valueAtom,
+          typeof update === "function"
+            ? (update as (prev: Value) => Value)(get(valueAtom))
+            : update
+        );
+      }
+    }
+  );
 
   baseAtom.onMount = (setAtom) => {
-    const listener = (event: any) => {
-      if (event.data.type === "micro-facial") {
-        setAtom((prev) => [
-          ...prev,
-          { image: event.data.frame, date: new Date() },
-        ]);
-      }
-    };
-    window.addEventListener("message", listener, false);
+    listenerWrapper = (event) => listener(event, setAtom);
+    window.addEventListener("message", listenerWrapper, false);
     return () => {
-      window.removeEventListener("message", listener);
+      window.removeEventListener("message", listenerWrapper);
     };
   };
 
   return baseAtom;
 }
+
+// export function useListenerAtom<Value>(
+//   anAtom: WritableAtom<Value, typeof TOGGLE_LISTENER>
+// ) {
+//   const StoreContext = getStoreContext(anAtom.scope);
+//   const [atom, updateAtom] = useContext(StoreContext);
+//   const set = useCallback(
+//     (event: any, set: any) => {
+//       if (event.data.type === "micro-facial") {
+//         updateAtom(anAtom, (prev: any) => [
+//           ...prev,
+//           {
+//             type: "impression",
+//             payload: { image: event.data.frame, date: new Date() },
+//           },
+//         ]);
+//       }
+//     },
+//     [anAtom, updateAtom]
+//   );
+//   // const setAtom = useCallback(() => updateAtom(anAtom, RESET), [
+//   //   updateAtom,
+//   //   anAtom,
+//   // ]);
+//   return [atom, set];
+// }
