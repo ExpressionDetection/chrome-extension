@@ -4,7 +4,7 @@ export const TOGGLE_LISTENER = Symbol();
 
 export function atomWithListener<Value>(
   initialValue: Value
-  ): PrimitiveAtom<Value> {
+): PrimitiveAtom<Value> {
   const isListening = atom(true);
   const valueAtom = atom(initialValue);
 
@@ -57,29 +57,3 @@ export function atomWithListener<Value>(
 
   return baseAtom;
 }
-
-// export function useListenerAtom<Value>(
-//   anAtom: WritableAtom<Value, typeof TOGGLE_LISTENER>
-// ) {
-//   const StoreContext = getStoreContext(anAtom.scope);
-//   const [atom, updateAtom] = useContext(StoreContext);
-//   const set = useCallback(
-//     (event: any, set: any) => {
-//       if (event.data.type === "micro-facial") {
-//         updateAtom(anAtom, (prev: any) => [
-//           ...prev,
-//           {
-//             type: "impression",
-//             payload: { image: event.data.frame, date: new Date() },
-//           },
-//         ]);
-//       }
-//     },
-//     [anAtom, updateAtom]
-//   );
-//   // const setAtom = useCallback(() => updateAtom(anAtom, RESET), [
-//   //   updateAtom,
-//   //   anAtom,
-//   // ]);
-//   return [atom, set];
-// }
