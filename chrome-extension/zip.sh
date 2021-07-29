@@ -1,1 +1,1 @@
-zip -r -X reel-extension.zip chrome-extension
+zip -r -X extension.zip chrome-extension
