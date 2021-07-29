@@ -8,7 +8,7 @@
 
 * Install [NodeJS](https://nodejs.org/en/) and [Yarn](https://classic.yarnpkg.com/en/)
 
-* Run `cd micro-facial-impressions && yarn install --no-bin-links` to install dependencies
+* Run `cd micro-facial-impressions && yarn install` to install dependencies
 
 * You can serve the frontend by running `APP_PORT=3000 && yarn run dev`
     * Make sure you're running on port `3000` or change the url from the chrome extension.
