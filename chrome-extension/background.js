@@ -8,13 +8,13 @@ chrome.tabs.onUpdated.addListener(async function(tabId, changeInfo, tab) {
       // console.log("SENT", changeInfo, tab);
       chrome.tabs.sendMessage(
         tabId,
-        { type: "microfacial.onTabUpdated", url: tab.url, tabId: tabId },
+        { type: "expression-detection.onVideoConferenceTab", url: tab.url, tabId: tabId },
         {},
         function(response) {}
       );
     }
   } catch (error) {
-    console.log("ERROR", error);
+    console.log("Chrome Tab Listener Error: ", error);
   }
   return true;
 });

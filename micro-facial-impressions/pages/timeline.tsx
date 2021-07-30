@@ -4,8 +4,17 @@ import { atomWithListener, TOGGLE_LISTENER } from "../store/timeline";
 import { Box } from "../components/system";
 import { TimelineHeader, TimelineItem } from "../components/timeline";
 import { useEffect } from "react";
+import Pusher from 'pusher-js/with-encryption';
 
-const timelineAtom = atomWithListener([
+
+console.log("NEXT_PUBLIC_PUSHER_KEY: ", process.env.NEXT_PUBLIC_PUSHER_APP_KEY)  
+console.log("NEXT_PUBLIC_PUSHER_CLUSTER: ", process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER)  
+
+const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
+  cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER,
+});
+
+const timelineAtom = atomWithListener([ 
   // {
   //   type: "summary",
   //   payload: {

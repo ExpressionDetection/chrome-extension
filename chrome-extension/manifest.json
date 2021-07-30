@@ -1,7 +1,8 @@
 {
-  "name": "VideoTest",
+  "name": "ExpressionDetection",
   "version": "0.1",
-  "description": "Automatically start a savings plan for anything on the web",
+  "description": "Detect and label facial expressions",
+  "content_security_policy": "script-src 'self' https://js.pusher.com/4.2/pusher.min.js https://stats.pusher.com; object-src 'self'",
   "manifest_version": 2,
   "permissions": ["tabs"],
   "icons": {

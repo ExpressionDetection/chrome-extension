@@ -8,9 +8,9 @@ export function atomWithListener<Value>(
   const isListening = atom(true);
   const valueAtom = atom(initialValue);
 
-  const listener = (event: any, set) => {
-    if (event.data.type === "micro-facial") {
-      set((prev) => [
+  const listener = (event: any, set: any) => {
+    if (event.data.type === "expression-detection.SendFrame") {
+      set((prev: any) => [
         ...prev,
         {
           type: "impression",

@@ -13,4 +13,5 @@ export interface ButtonProps extends ButtonStyledProps {
   text?: boolean
   block?: boolean
   css?: CSSProp
+  onClick: object
 }

@@ -1,13 +1,4 @@
-#image-reel {
-  position: fixed;
-  top: 50%;
-  right: 0;
-  /* width: 100px;
-  height: 100px; */
-  z-index: 999;
-}
-
-#microfacial-custom-container .tab-container {
+#expression-detection-custom-container .tab-container {
   position: fixed;
   top: 50%;
   transform: translateY(-50%);
@@ -24,7 +15,7 @@
   z-index: 999;
   cursor: pointer;
 }
-.animate-microfacial-iframe {
+.animate-expression-detection-iframe {
   -webkit-animation: slide 0.5s forwards;
   animation: slide 0.5s forwards;
 }
@@ -35,7 +26,7 @@
   }
 }
 
-.hide-microfacial-iframe {
+.hide-expression-detection-iframe {
   -webkit-animation: animate-hide 0.5s backwards;
   animation: animate-hide 0.5s backwards;
 }
@@ -49,19 +40,19 @@
   }
 }
 
-#microfacial-custom-container .tab-container .tab-logo {
+#expression-detection-custom-container .tab-container .tab-logo {
   height: 100%;
   width: 100%;
   object-fit: contain;
   padding: 2px;
 }
 
-#microfacial-custom-container .tab-container .dots-img {
+#expression-detection-custom-container .tab-container .dots-img {
   height: 100%;
   object-fit: contain;
 }
 
-#microfacial-custom-container .custom-container {
+#expression-detection-custom-container .custom-container {
   width: 413px;
   max-width: 100%;
   max-height: 700px;
@@ -75,35 +66,35 @@
   z-index: 999;
 }
 
-#microfacial-custom-container .custom-container .header-container {
+#expression-detection-custom-container .custom-container .header-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 15px;
 }
 
-#microfacial-custom-container .custom-container .header-container .header-black-logo {
+#expression-detection-custom-container .custom-container .header-container .header-black-logo {
   height: auto;
   width: 40px;
 }
 
-#microfacial-custom-container .custom-container .header-container .header-close {
+#expression-detection-custom-container .custom-container .header-container .header-close {
   height: auto;
   width: 15px;
   cursor: pointer;
 }
 
-#microfacial-custom-container .custom-container .header-container .header-text {
+#expression-detection-custom-container .custom-container .header-container .header-text {
   font-family: "Gotham-Book";
   margin-top: 4px;
 }
 
-#microfacial-custom-container .custom-container .iframe-container {
+#expression-detection-custom-container .custom-container .iframe-container {
   width: 100%;
   height: 650px;
 }
 
-#microfacial-custom-container .custom-container .iframe-container .frame {
+#expression-detection-custom-container .custom-container .iframe-container .frame {
   width: 100%;
   height: 100%;
 }

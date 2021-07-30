@@ -1,14 +1,13 @@
 const state = {
   tabOpened: false,
-  lastUrl: null,
-  currentUrl: null,
+  currentUrl: null
 };
 
 function closeTab() {
   const container = document.querySelector(".custom-container");
   if (container) {
-    container.classList.remove("animate-microfacial-iframe");
-    container.classList.add("hide-microfacial-iframe");
+    container.classList.remove("animate-expression-detection-iframe");
+    container.classList.add("hide-expression-detection-iframe");
     state.tabOpened = false;
   }
 }
@@ -16,8 +15,8 @@ function closeTab() {
 function openTab() {
   const container = document.querySelector(".custom-container");
   if (container) {
-    container.classList.add("animate-microfacial-iframe");
-    container.classList.remove("hide-microfacial-iframe");
+    container.classList.add("animate-expression-detection-iframe");
+    container.classList.remove("hide-expression-detection-iframe");
     state.tabOpened = true;
   }
 }
@@ -32,21 +31,22 @@ async function queryAsync(query, timer) {
 }
 
 async function messageReceived(message, sender, sendResponse) {
-  // console.log("content.js =================>", message);
-  const iframeExists = document.querySelector("#iframe-reel");
+  const iframeExists = document.querySelector("#iframe-expression-detection");
   if (iframeExists) {
     return true;
   }
 
-  if (message.type === "microfacial.onTabUpdated") {
+  // Render the extension HTML/IFrame when we find that the user is on a tab 
+  // which URL is one of the choosen video conference applications (Microsoft Teams, Google Meet, etc..)
+  if (message.type === "expression-detection.onVideoConferenceTab") {
     fetch(chrome.runtime.getURL("templates/index.html"))
       .then((response) => response.text())
       .then((html) => {
-        let tabContainerDiv = document
+        const tabContainerDiv = document
           .createRange()
           .createContextualFragment(html);
         document.body.appendChild(tabContainerDiv);
-        let crossImage = document.querySelector(".header-close");
+        const crossImage = document.querySelector(".header-close");
         crossImage.src = chrome.extension.getURL("images/hamburger.svg");
         crossImage.addEventListener("click", function() {
           closeTab();
@@ -55,9 +55,6 @@ async function messageReceived(message, sender, sendResponse) {
           .querySelector(".tab-container")
           .addEventListener("click", function() {
             openTab();
-            if (state.currentUrl !== state.lastUrl) {
-              refreshIframeURL();
-            }
           });
         return true;
       });

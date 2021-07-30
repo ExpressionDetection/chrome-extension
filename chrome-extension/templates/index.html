@@ -1,5 +1,5 @@
-<div id="microfacial-custom-container">
-  <div class="tab-container animate-microfacial-iframe">
+<div id="expression-detection-custom-container">
+  <div class="tab-container animate-expression-detection-iframe">
   </div>
 
   <div class="custom-container">
@@ -8,7 +8,7 @@
     </div>
     <div class="iframe-container">
       <iframe
-        id="iframe-reel"
+        id="iframe-expression-detection"
         class="frame"
         src="http://localhost:3000/start"
         frameborder="0"
@@ -20,30 +20,38 @@
       >
       </iframe>
       <script text="javascript" id="iframe-script">
-        let x;
         function captureVideo(video) {
-          var canvas = document.createElement("canvas");
+          const canvas = document.createElement("canvas");
           canvas.width = video.videoWidth;
           canvas.height = video.videoHeight;
-          var canvasContext = canvas.getContext("2d");
+          const canvasContext = canvas.getContext("2d");
           canvasContext.drawImage(video, 0, 0);
+          // Get video content in base64
           const dataURL = canvas.toDataURL("image/png");
-          // console.log(dataURL);
           return {
             dataURL,
             width: video.videoWidth,
             height: video.videoHeight,
           };
         }
+
+        const intervalTimeBetweenFramesInSeconds = 1 // 1 second
+
         setInterval(() => {
-          const iFrame = document.querySelector("#iframe-reel");
+          // Retrieve our custom made IFrame 
+          const iFrame = document.querySelector("#iframe-expression-detection");
+
+          // Query for "video" class inside the page to extract video (Google Meet, Microsoft Teams, etc..)
           const video = document.querySelector("video");
-          // console.log(video);
+
+          // TODO: select a specific video feed if "video" is an array
+
+          // Send video frame to our custom IFrame
           if (video) {
             const { dataURL: frame, width, height } = captureVideo(video);
-            iFrame.contentWindow.postMessage({ type: "micro-facial", frame }, "*");
+            iFrame.contentWindow.postMessage({ type: "expression-detection.SendFrame", frame }, "*");
           }
-        }, 1000);
+        }, intervalTimeBetweenFramesInSeconds * 1000);
       </script>
     </div>
   </div>
