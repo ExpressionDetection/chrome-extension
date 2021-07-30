@@ -1,62 +1,101 @@
-import React, { useEffect } from "react";
-import { useAtom } from "jotai";
-import { atomWithMessage } from "../store/timeline";
-import Card from "../components/Card";
+import React, { useRef } from "react";
+import { atom, useAtom } from "jotai";
+import { atomWithListener, TOGGLE_LISTENER } from "../store/timeline";
 import { Box } from "../components/system";
+import { TimelineHeader, TimelineItem } from "../components/timeline";
+import { useEffect } from "react";
 
-const timelineAtom = atomWithMessage([
+const timelineAtom = atomWithListener([
   // {
-  //   date: new Date(),
-  //   image:
-  //     "https://static.remove.bg/remove-bg-web/8be32deab801c5299982a503e82b025fee233bd0/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg",
+  //   type: "summary",
+  //   payload: {
+  //     date: new Date(),
+  //     image:
+  //       "https://static.remove.bg/remove-bg-web/8be32deab801c5299982a503e82b025fee233bd0/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg",
+  //   },
   // },
   // {
-  //   date: new Date(),
-  //   image:
-  //     "https://static.remove.bg/remove-bg-web/8be32deab801c5299982a503e82b025fee233bd0/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg",
+  //   type: "impression",
+  //   payload: {
+  //     date: new Date(),
+  //     image:
+  //       "https://static.remove.bg/remove-bg-web/8be32deab801c5299982a503e82b025fee233bd0/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg",
+  //   },
   // },
   // {
-  //   date: new Date(),
-  //   image:
-  //     "https://static.remove.bg/remove-bg-web/8be32deab801c5299982a503e82b025fee233bd0/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg",
+  //   type: "impression",
+  //   payload: {
+  //     date: new Date(),
+  //     image:
+  //       "https://static.remove.bg/remove-bg-web/8be32deab801c5299982a503e82b025fee233bd0/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg",
+  //   },
+  // },
+  // {
+  //   type: "impression",
+  //   payload: {
+  //     date: new Date(),
+  //     image:
+  //       "https://static.remove.bg/remove-bg-web/8be32deab801c5299982a503e82b025fee233bd0/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg",
+  //   },
   // },
 ]);
 
-export default function CustomizedTimeline() {
-  const [timeline, set] = useAtom(timelineAtom);
-  useEffect(() => {
-    console.log("useEffect loaded");
-    // setInterval(() => {
-    //   parent.postMessage("react", "*");
-    // }, 5000);
-    //@ts-ignore
-    // eslint-disable-next-line
-    // window.addEventListener("message", (message) => {
-    //   console.log("HEY ==========>", message);
-    // });
-  }, []);
+const active = atom(true);
 
+export default function CustomizedTimeline() {
+  const [isActive, setActive] = useAtom(active);
+  const [timeline, setTimeline] = useAtom(timelineAtom);
+  const listRef = useRef<HTMLDivElement>();
+  const mounted = useRef(false);
+
+  useEffect(() => {
+    if (!isActive) {
+      setTimeline((prev) => [
+        ...prev,
+        {
+          type: "summary",
+          payload: {
+            date: new Date(),
+            image:
+              "https://static.remove.bg/remove-bg-web/8be32deab801c5299982a503e82b025fee233bd0/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg",
+          },
+        },
+      ]);
+    }
+    if (mounted.current) {
+      setTimeline(TOGGLE_LISTENER);
+    }
+    mounted.current = true;
+  }, [isActive]);
+
+  useEffect(() => {
+    console.log(listRef);
+    if (listRef.current) {
+      setTimeout(() => {
+        listRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+      }, 50);
+    }
+  }, [timeline]);
+  console.log("timeline ===============+>", timeline);
   return (
-    <Box display="flex" flexDirection="column" flex="1" p='sm' height="100%" width="100%">
-      {timeline.map((item: any) => (
-        <Card {...item} />
-        // <TimelineItem>
-        //   <TimelineOppositeContent>
-        //     <Typography variant="body2" color="textSecondary">
-        //       {format(item.date, "HH:mm a")}
-        //     </Typography>
-        //   </TimelineOppositeContent>
-        //   <TimelineSeparator>
-        //     <TimelineDot color="grey">
-        //       <SentimentDissatisfiedTwoToneIcon color="primary" />
-        //     </TimelineDot>
-        //     <TimelineConnector />
-        //   </TimelineSeparator>
-        //   <TimelineContent>
-        //     <ImageCardWithActions image={item.image} />
-        //   </TimelineContent>
-        // </TimelineItem>
-      ))}
-    </Box>
+    <>
+      <TimelineHeader
+        isActive={isActive}
+        toggleSession={() => setActive((prev) => !prev)}
+      />
+      <Box
+        ref={listRef}
+        display="flex"
+        flexDirection="column"
+        flex="1"
+        p="sm"
+        height="100%"
+        width="100%"
+      >
+        {timeline.map((item: any, index: number) => (
+          <TimelineItem {...item} key={index} />
+        ))}
+      </Box>
+    </>
   );
 }

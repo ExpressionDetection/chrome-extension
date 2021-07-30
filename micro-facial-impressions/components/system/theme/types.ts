@@ -53,7 +53,7 @@ export type DefaultStyleProps = BorderProps &
 
 export type Color = "default" | "dark" | "ligth" | "hover" | "contrast"
 
-export type ColorType = 'base' | 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'link'
+export type ColorType = 'base' | 'primary' | 'secondary' | 'terciary' | 'success' | 'danger' | 'warning' | 'info' | 'link'
 
 type FontSizes = {
   base: string;

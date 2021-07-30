@@ -3,15 +3,15 @@
   "version": "0.1",
   "description": "Automatically start a savings plan for anything on the web",
   "manifest_version": 2,
-  "permissions": ["tabs", "webNavigation"],
+  "permissions": ["tabs"],
   "icons": {
-    "16": "images/icon_16x16.png",
-    "32": "images/icon_32x32.png",
-    "48": "images/icon_48x48.png",
-    "128": "images/icon_128x128.png"
+    "16": "images/logo_16x16.png",
+    "32": "images/logo_32x32.png",
+    "48": "images/logo_48x48.png",
+    "128": "images/logo_128x128.png"
   },
 
-  "web_accessible_resources": ["images/*", "templates/*", "fonts/*"],
+  "web_accessible_resources": ["images/*", "templates/*"],
   "externally_connectable": {
     "matches": ["*://*.test.com/*"]
   },
@@ -21,19 +21,17 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://*.meet.google.com/*"],
+      "matches": ["https://*.meet.google.com/*", "https://*.teams.live.com/*"],
       "js": ["content.js"],
-      "css": ["styles/index.css"],
-      "all_frames": true
+      "css": ["styles/index.css"]
     }
   ],
   "browser_action": {
-    "default_popup": "popup.html",
     "default_icon": {
-      "16": "images/icon_16x16.png",
-      "32": "images/icon_32x32.png",
-      "48": "images/icon_48x48.png",
-      "128": "images/icon_128x128.png"
+      "16": "images/logo_16x16.png",
+      "32": "images/logo_32x32.png",
+      "48": "images/logo_48x48.png",
+      "128": "images/logo_128x128.png"
     }
   }
 }
