@@ -1,13 +1,9 @@
-<div id="reel-custom-container">
-  <div class="tab-container animate-reel-iframe">
-    <!-- <img class="tab-logo" /> -->
-    <!-- <img class="dots-img" /> -->
+<div id="microfacial-custom-container">
+  <div class="tab-container animate-microfacial-iframe">
   </div>
 
   <div class="custom-container">
     <div class="header-container">
-      <!-- <img class="header-black-logo" />
-      <span class="header-text">Micro</span> -->
       <img class="header-close" />
     </div>
     <div class="iframe-container">
@@ -39,26 +35,12 @@
             height: video.videoHeight,
           };
         }
-        // window.addEventListener("message", (event) =>
-        //   console.log("index.html ===============>", window.x)
-        // );
-        // chrome.runtime.onMessage.addListener((event) =>
-        //   console.log("index.html ===============>", event)
-        // );
-        // chrome.runtime.sendMessage("paeljgecgbolabklepkpkfdkmjbhmpdb", {
-        //   message: "OLAAAA",
-        // });
         setInterval(() => {
           const iFrame = document.querySelector("#iframe-reel");
-          // console.log("index.html ===============>", iFrame, window.x);
-          // iFrame.contentWindow.postMessage(x, "*");
           const video = document.querySelector("video");
           // console.log(video);
           if (video) {
             const { dataURL: frame, width, height } = captureVideo(video);
-            // const image = window.URL.createObjectURL(frame);
-            // console.log(image);
-            // const iFrame = document.querySelector("#iframe-reel");
             iFrame.contentWindow.postMessage({ type: "micro-facial", frame }, "*");
           }
         }, 1000);
