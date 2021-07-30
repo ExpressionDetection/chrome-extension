@@ -3,7 +3,7 @@ import Card from "../Card";
 import DoughnutGraph from "../DoughnutGraph";
 import { Box, Button, Image, Text } from "../system";
 
-const Impression = ({ image, date }) => {
+const Impression = ({ image, date, measure, ...rest }) => {
   return (
     <Box
       m="md"
@@ -11,11 +11,13 @@ const Impression = ({ image, date }) => {
       flex="1"
       flexDirection="column"
       alignItems="center"
+      {...rest}
     >
       <Card>
         <Box display="flex" flex="1" flexDirection="column" p="16px">
           <Image
             src={image}
+            onLoad={measure}
             width={1}
             display="flex"
             flex={1}
@@ -56,7 +58,7 @@ const Impression = ({ image, date }) => {
       <Box
         display="flex"
         width="100%"
-        mt="xs"
+        my="xs"
         flexDirection="row"
         alignItems="flex-start"
         justifyContent="flex-end"

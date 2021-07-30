@@ -7,7 +7,7 @@ interface Props {
   date: Date;
 }
 
-const Summary: React.FC<Props> = ({ image, date }) => {
+const Summary: React.FC<Props> = ({ image, date, ...rest }) => {
   return (
     <Box
       m="md"
@@ -16,6 +16,7 @@ const Summary: React.FC<Props> = ({ image, date }) => {
       height="100%"
       flexDirection="column"
       alignItems="center"
+      {...rest}
     >
       <Card border={false}>
         <Box

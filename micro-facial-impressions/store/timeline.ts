@@ -1,3 +1,4 @@
+import produce from "immer";
 import { atom, PrimitiveAtom } from "jotai";
 
 export const TOGGLE_LISTENER = Symbol();
@@ -39,9 +40,15 @@ export function atomWithListener<Value>(
       } else {
         set(
           valueAtom,
-          typeof update === "function"
-            ? (update as (prev: Value) => Value)(get(valueAtom))
-            : update
+          produce(
+            get(valueAtom),
+            typeof update === 'function'
+              ? (update as (draft: Draft<Value>) => void)
+              : () => update
+          )
+          // typeof update === "function"
+          //   ? (update as (prev: Value) => Value)(get(valueAtom))
+          //   : update
         );
       }
     }
