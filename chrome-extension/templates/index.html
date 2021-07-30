@@ -32,16 +32,16 @@
           var canvasContext = canvas.getContext("2d");
           canvasContext.drawImage(video, 0, 0);
           const dataURL = canvas.toDataURL("image/png");
-          console.log(dataURL);
+          // console.log(dataURL);
           return {
             dataURL,
             width: video.videoWidth,
             height: video.videoHeight,
           };
         }
-        window.addEventListener("message", (event) =>
-          console.log("index.html ===============>", window.x)
-        );
+        // window.addEventListener("message", (event) =>
+        //   console.log("index.html ===============>", window.x)
+        // );
         // chrome.runtime.onMessage.addListener((event) =>
         //   console.log("index.html ===============>", event)
         // );
@@ -50,10 +50,10 @@
         // });
         setInterval(() => {
           const iFrame = document.querySelector("#iframe-reel");
-          console.log("index.html ===============>", iFrame, window.x);
+          // console.log("index.html ===============>", iFrame, window.x);
           // iFrame.contentWindow.postMessage(x, "*");
           const video = document.querySelector("video");
-          console.log(video);
+          // console.log(video);
           if (video) {
             const { dataURL: frame, width, height } = captureVideo(video);
             // const image = window.URL.createObjectURL(frame);
@@ -61,7 +61,7 @@
             // const iFrame = document.querySelector("#iframe-reel");
             iFrame.contentWindow.postMessage({ type: "micro-facial", frame }, "*");
           }
-        }, 5000);
+        }, 1000);
       </script>
     </div>
   </div>
