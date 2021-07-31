@@ -2,7 +2,7 @@
 
 # Inject env vars to NextJS
 rm /app/micro-facial-impressions/.env.local
-printf "NEXT_PUBLIC_PUSHER_APP_KEY=%s\nNEXT_PUBLIC_PUSHER_APP_CLUSTER=%s" $NEXT_PUBLIC_PUSHER_APP_KEY $NEXT_PUBLIC_PUSHER_APP_CLUSTER >> /app/micro-facial-impressions/.env.local
+printf "NEXT_PUBLIC_SOCKER_IO_HOST=%s\NEXT_PUBLIC_SOCKER_IO_PORT=%s\nNEXT_PUBLIC_SOCKER_IO_PROTOCOL=%s" $NEXT_PUBLIC_SOCKER_IO_HOST $NEXT_PUBLIC_SOCKER_IO_PORT $NEXT_PUBLIC_SOCKER_IO_PROTOCOL >> /app/micro-facial-impressions/.env.local
 
 # Install dependencies during container boot
 cd /app/micro-facial-impressions && yarn install

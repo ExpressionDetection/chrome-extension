@@ -1,4 +1,33 @@
 import { atom, PrimitiveAtom } from "jotai";
+import socket from "../socketio";
+import { v4 as uuidv4 } from 'uuid';
+
+let sessionID = localStorage.getItem("sockerioSessionId");
+let usernameAlreadySelected = false;
+
+if (sessionID) {
+  usernameAlreadySelected = true;
+} else {
+  sessionID = uuidv4();
+}
+
+socket.auth = { sessionID };
+socket.connect();
+
+socket.on("session", ({ sessionID, userID }: any) => {
+  // attach the session ID to the next reconnection attempts
+  socket.auth = { sessionID };
+  // store it in the localStorage
+  localStorage.setItem("sockerioSessionId", sessionID);
+  // save the ID of the user
+  socket.userID = userID;
+});
+
+socket.on("connect_error", (err: any) => {
+  if (err.message === "invalid username") {
+    usernameAlreadySelected = false;
+  }
+});
 
 export const TOGGLE_LISTENER = Symbol();
 
@@ -10,13 +39,21 @@ export function atomWithListener<Value>(
 
   const listener = (event: any, set: any) => {
     if (event.data.type === "expression-detection.SendFrame") {
-      set((prev: any) => [
-        ...prev,
-        {
-          type: "impression",
-          payload: { image: event.data.frame, date: new Date() },
-        },
-      ]);
+
+      //socket.emit("predictionRequest", {
+      //  frame: event.data.frame,
+      //});
+
+      //socket.on("predictionResponse", (data: any) => {
+        //console.log(data)
+        set((prev: any) => [
+          ...prev,
+          {
+            type: "impression",
+            payload: { image: event.data.frame, date: new Date() },
+          },
+        ]);
+      //});
     }
   };
   let listenerWrapper: (event: any) => void;

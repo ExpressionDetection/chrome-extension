@@ -1,46 +1,13 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { atom, useAtom } from "jotai";
+
 import { atomWithListener, TOGGLE_LISTENER } from "../store/timeline";
 import { Box } from "../components/system";
 import { TimelineHeader, TimelineItem } from "../components/timeline";
-import { useEffect } from "react";
-import Pusher from 'pusher-js/with-encryption';
-
-
-console.log("NEXT_PUBLIC_PUSHER_KEY: ", process.env.NEXT_PUBLIC_PUSHER_APP_KEY)  
-console.log("NEXT_PUBLIC_PUSHER_CLUSTER: ", process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER)  
-
-const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
-  cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER,
-});
 
 const timelineAtom = atomWithListener([ 
   // {
   //   type: "summary",
-  //   payload: {
-  //     date: new Date(),
-  //     image:
-  //       "https://static.remove.bg/remove-bg-web/8be32deab801c5299982a503e82b025fee233bd0/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg",
-  //   },
-  // },
-  // {
-  //   type: "impression",
-  //   payload: {
-  //     date: new Date(),
-  //     image:
-  //       "https://static.remove.bg/remove-bg-web/8be32deab801c5299982a503e82b025fee233bd0/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg",
-  //   },
-  // },
-  // {
-  //   type: "impression",
-  //   payload: {
-  //     date: new Date(),
-  //     image:
-  //       "https://static.remove.bg/remove-bg-web/8be32deab801c5299982a503e82b025fee233bd0/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg",
-  //   },
-  // },
-  // {
-  //   type: "impression",
   //   payload: {
   //     date: new Date(),
   //     image:
@@ -59,17 +26,21 @@ export default function CustomizedTimeline() {
 
   useEffect(() => {
     if (!isActive) {
-      setTimeline((prev) => [
-        ...prev,
-        {
-          type: "summary",
-          payload: {
-            date: new Date(),
-            image:
-              "https://static.remove.bg/remove-bg-web/8be32deab801c5299982a503e82b025fee233bd0/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg",
-          },
-        },
-      ]);
+        // Display recording overview if timeline no longer active
+        setTimeline((prev) => {        
+          return [
+            ...prev,
+            {
+              type: "summary",
+              payload: {
+                date: new Date(),
+                image:
+                  "https://static.remove.bg/remove-bg-web/8be32deab801c5299982a503e82b025fee233bd0/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg",
+              },
+            },
+          ]
+      
+      });
     }
     if (mounted.current) {
       setTimeline(TOGGLE_LISTENER);
@@ -78,14 +49,13 @@ export default function CustomizedTimeline() {
   }, [isActive]);
 
   useEffect(() => {
-    console.log(listRef);
     if (listRef.current) {
       setTimeout(() => {
         listRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
       }, 50);
     }
   }, [timeline]);
-  console.log("timeline ===============+>", timeline);
+
   return (
     <>
       <TimelineHeader
