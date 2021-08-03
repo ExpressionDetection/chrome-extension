@@ -56,17 +56,17 @@ export function atomWithListener<Value>(
       if (update === TOGGLE_LISTENER) {
         if (get(isListening)) {
           console.log(
-            "REMOVING EVENT LISTENER AND DISCONNECTING SOCKETIO ==============>",
+            "REMOVING EVENT LISTENER AND SOCKETIO LISTNER ==============>",
             get(isListening),
             frameListenerWrapper
           );
           window.removeEventListener("message", frameListenerWrapper, false);
-          socket.off("predictionResponse", predictionListenerWrapper);
-          socket.disconnect();
+          socket.off("predictionResponse");
+          // socket.disconnect();
         } else {
           window.addEventListener("message", frameListenerWrapper, false);
           socket.on("predictionResponse", predictionListenerWrapper);
-          connectSocketSession();
+          // connectSocketSession();
         }
         // Clear any lingering images from our cache
         framesMap = new Map();
