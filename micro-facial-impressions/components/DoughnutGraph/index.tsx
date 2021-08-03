@@ -2,26 +2,27 @@ import { memo } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Box, Text } from "../system";
 
-const data = {
-  labels: ["Neutral", "Happy", "Sad", "Disgusted"],
-  legend: {
-    display: false,
-  },
-  datasets: [
-    {
-      label: "My First Dataset",
-      data: [25, 50, 15, 10],
-      backgroundColor: ["#1EE449", "#57BFFA", "#801CFF", "#FFBA33"],
-      hoverOffset: 4,
-      spacing: 4,
-      radius: 60,
-      borderRadius: 8,
-      cutout: "80%",
-    },
-  ],
-};
+const DoughnutGraph = ({ title, model }: any) => {
 
-const DoughnutGraph = ({ title }) => {
+  const data = {
+    labels: model.labels,
+    legend: {
+      display: false,
+    },
+    datasets: [
+      {
+        label: title,
+        data: model.probabilities,
+        backgroundColor: ["#1EE449", "#57BFFA", "#801CFF"],
+        hoverOffset: 4,
+        spacing: 4,
+        radius: 60,
+        borderRadius: 8,
+        cutout: "80%",
+      },
+    ],
+  };
+
   return (
     <Box
       display="flex"
@@ -54,11 +55,11 @@ const DoughnutGraph = ({ title }) => {
         >
           <img src="/accuracy.svg" color="black" width={12} height={12} />
           <Text styling="bold" fontSize="sm" color="text.default" my={1}>
-            55%
+            {model.probabilities[0]}
           </Text>
         </Box>
         <Text styling="bold" fontSize="sm" color="text.default" my={1}>
-          Happy
+          {model.labels[0]}
         </Text>
       </Box>
       <Doughnut

@@ -11,4 +11,32 @@ socket.onAny((event: any, ...args: any) => {
   console.log(event, args);
 });
 
-export default socket;
+socket.on("session", ({ sessionID, userID }: any) => {
+  console.log("SocketIO: Started Session")
+  console.log(`SessionID: ${sessionID}`)
+  console.log(`UserID: ${userID}`)
+  // attach the session ID to the next reconnection attempts
+  socket.auth = { sessionID };
+  // store it in the localStorage
+  localStorage.setItem("socketioSessionId", sessionID);
+  // save the ID of the user
+  socket.userID = userID;
+});
+
+socket.on("connect_error", (err: any) => {
+  console.log("SocketIO: Session Error on Connect: ", err)
+});
+
+socket.on("disconnect", () => {
+  console.log("SocketIO: Session Disconnected")
+});
+
+function connectSocketSession() {
+  const sessionID = localStorage.getItem("socketioSessionId");
+
+  socket.auth = { sessionID };
+  
+  socket.connect();
+}
+
+export { socket, connectSocketSession };

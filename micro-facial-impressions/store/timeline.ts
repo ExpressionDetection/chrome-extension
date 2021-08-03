@@ -1,77 +1,75 @@
 import { atom, PrimitiveAtom } from "jotai";
-import socket from "../socketio";
 import { v4 as uuidv4 } from 'uuid';
-
-let sessionID = localStorage.getItem("sockerioSessionId");
-let usernameAlreadySelected = false;
-
-if (sessionID) {
-  usernameAlreadySelected = true;
-} else {
-  sessionID = uuidv4();
-}
-
-socket.auth = { sessionID };
-socket.connect();
-
-socket.on("session", ({ sessionID, userID }: any) => {
-  // attach the session ID to the next reconnection attempts
-  socket.auth = { sessionID };
-  // store it in the localStorage
-  localStorage.setItem("sockerioSessionId", sessionID);
-  // save the ID of the user
-  socket.userID = userID;
-});
-
-socket.on("connect_error", (err: any) => {
-  if (err.message === "invalid username") {
-    usernameAlreadySelected = false;
-  }
-});
+import { socket, connectSocketSession } from "../socketio";
 
 export const TOGGLE_LISTENER = Symbol();
 
 export function atomWithListener<Value>(
   initialValue: Value
 ): PrimitiveAtom<Value> {
+  // This map caches temporarily frames in the client side
+  let framesMap = new Map();
   const isListening = atom(true);
   const valueAtom = atom(initialValue);
 
-  const listener = (event: any, set: any) => {
+  const frameListener = (event: any, set: any) => {
+    if (!socket.connected) return;
     if (event.data.type === "expression-detection.SendFrame") {
-
-      //socket.emit("predictionRequest", {
-      //  frame: event.data.frame,
-      //});
-
-      //socket.on("predictionResponse", (data: any) => {
-        //console.log(data)
-        set((prev: any) => [
-          ...prev,
-          {
-            type: "impression",
-            payload: { image: event.data.frame, date: new Date() },
-          },
-        ]);
-      //});
+      const uuid = uuidv4();
+      framesMap.set(uuid, event.data.frame)
+      socket.emit("predictionRequest", {
+        payload: {
+          uuid,
+          frame: event.data.frame,
+        },
+        to: socket.userID
+      });
     }
   };
-  let listenerWrapper: (event: any) => void;
+
+  const predictionListener = (data: any, set: any) => {
+    if (!socket.connected) return;
+    const frame = framesMap.get(data.uuid)
+    set((prev: any) => [
+      ...prev,
+      {
+        type: "impression",
+        payload: { 
+          image: frame, 
+          prediction: {
+            models: data.models,
+            aggregatedResult: data.aggregatedResult,
+          },
+          date: new Date() 
+        },
+      },
+    ]);
+    framesMap.delete(data.uuid)
+  };
+
+  let frameListenerWrapper: (event: any) => void;
+  let predictionListenerWrapper: (data: any) => void;
 
   const baseAtom = atom(
     (get) => get(valueAtom),
     (get, set, update: any | typeof TOGGLE_LISTENER) => {
       if (update === TOGGLE_LISTENER) {
-        console.log(
-          "REMOVING EVENT LISTENER ==============>",
-          get(isListening),
-          listenerWrapper
-        );
         if (get(isListening)) {
-          window.removeEventListener("message", listenerWrapper, false);
+          console.log(
+            "REMOVING EVENT LISTENER AND DISCONNECTING SOCKETIO ==============>",
+            get(isListening),
+            frameListenerWrapper
+          );
+          window.removeEventListener("message", frameListenerWrapper, false);
+          socket.off("predictionResponse", predictionListenerWrapper);
+          socket.disconnect();
         } else {
-          window.addEventListener("message", listenerWrapper, false);
+          window.addEventListener("message", frameListenerWrapper, false);
+          socket.on("predictionResponse", predictionListenerWrapper);
+          connectSocketSession();
         }
+        // Clear any lingering images from our cache
+        framesMap = new Map();
         set(isListening, (prev) => !prev);
       } else {
         set(
@@ -85,10 +83,19 @@ export function atomWithListener<Value>(
   );
 
   baseAtom.onMount = (setAtom) => {
-    listenerWrapper = (event) => listener(event, setAtom);
-    window.addEventListener("message", listenerWrapper, false);
+    // Catching frames and sending to inference
+    frameListenerWrapper = (event) => frameListener(event, setAtom);
+    window.addEventListener("message", frameListenerWrapper, false);
+
+    // Catching predictions from inference requests
+    predictionListenerWrapper = (data) => predictionListener(data, setAtom);
+    socket.on("predictionResponse", predictionListenerWrapper);
+
+    connectSocketSession();
+
     return () => {
-      window.removeEventListener("message", listenerWrapper);
+      window.removeEventListener("message", frameListenerWrapper);
+      socket.disconnect();
     };
   };
 

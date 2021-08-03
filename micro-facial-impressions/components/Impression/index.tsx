@@ -1,9 +1,14 @@
 import format from "date-fns/format";
 import Card from "../Card";
 import DoughnutGraph from "../DoughnutGraph";
-import { Box, Button, Image, Text } from "../system";
+import { Box, Image, Text } from "../system";
 
-const Impression = ({ image, date }) => {
+const Impression = (payload: any) => {
+  const image = payload.image
+  const date = payload.date
+  const models = payload.prediction.models;
+  const modelsAggregatedResult = payload.prediction.aggregatedResult;
+
   return (
     <Box
       m="md"
@@ -28,28 +33,9 @@ const Impression = ({ image, date }) => {
             gridTemplateColumns="1fr 1fr"
             gridTemplateRows="auto"
           >
-            <DoughnutGraph title="Model 1" key="model 2" />
-            <DoughnutGraph title="Model 2" key="model 1" />
-            <DoughnutGraph title="Model 3" key="model 3" />
-            <DoughnutGraph title="Model 4" key="model 4" />
-          </Box>
-          <Box
-            display="flex"
-            flexDirection="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Text styling="semi-bold" fontSize="sm" color="text.light">
-              Was this impression useful?
-            </Text>
-            <Box>
-              <Button styling="secondary" outline mx="4px">
-                yes
-              </Button>
-              <Button styling="terciary" outline>
-                no
-              </Button>
-            </Box>
+            {models.map((model: any) => <DoughnutGraph title={model.name} model={model} key={model.name} />)}
+            <br />
+            <DoughnutGraph title={modelsAggregatedResult.name} model={modelsAggregatedResult} key={modelsAggregatedResult.name} />
           </Box>
         </Box>
       </Card>
