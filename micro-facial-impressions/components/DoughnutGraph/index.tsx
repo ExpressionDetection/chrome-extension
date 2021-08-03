@@ -55,11 +55,11 @@ const DoughnutGraph = ({ title, model }: any) => {
         >
           <img src="/accuracy.svg" color="black" width={12} height={12} />
           <Text styling="bold" fontSize="sm" color="text.default" my={1}>
-            {model.probabilities[0]}
+            {`${model.probabilities[model.topProbabilityIndex].toFixed(2)}%`}
           </Text>
         </Box>
         <Text styling="bold" fontSize="sm" color="text.default" my={1}>
-          {model.labels[0]}
+          {model.labels[model.topProbabilityIndex]}
         </Text>
       </Box>
       <Doughnut
