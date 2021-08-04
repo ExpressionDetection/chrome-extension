@@ -91,11 +91,11 @@ export function atomWithListener<Value>(
     predictionListenerWrapper = (data) => predictionListener(data, setAtom);
     socket.on("predictionResponse", predictionListenerWrapper);
 
-    connectSocketSession();
+    // connectSocketSession();
 
     return () => {
       window.removeEventListener("message", frameListenerWrapper);
-      socket.disconnect();
+      // socket.disconnect();
     };
   };
 

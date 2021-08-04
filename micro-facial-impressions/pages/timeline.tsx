@@ -5,7 +5,7 @@ import { atomWithListener, TOGGLE_LISTENER } from "../store/timeline";
 import { Box } from "../components/system";
 import { TimelineHeader, TimelineItem } from "../components/timeline";
 
-const timelineAtom = atomWithListener([ 
+const timelineAtom = atomWithListener([
   // {
   //   type: "summary",
   //   payload: {
@@ -25,21 +25,27 @@ export default function CustomizedTimeline() {
   const mounted = useRef(false);
 
   useEffect(() => {
+    window.parent.postMessage(
+      { type: "expression-detection.StartSession" },
+      "*"
+    );
+  }, []);
+
+  useEffect(() => {
     if (!isActive) {
-        // Display recording overview if timeline no longer active
-        setTimeline((prev) => {        
-          return [
-            ...prev,
-            {
-              type: "summary",
-              payload: {
-                date: new Date(),
-                image:
-                  "https://static.remove.bg/remove-bg-web/8be32deab801c5299982a503e82b025fee233bd0/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg",
-              },
+      // Display recording overview if timeline no longer active
+      setTimeline((prev) => {
+        return [
+          ...prev,
+          {
+            type: "summary",
+            payload: {
+              date: new Date(),
+              image:
+                "https://static.remove.bg/remove-bg-web/8be32deab801c5299982a503e82b025fee233bd0/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg",
             },
-          ]
-      
+          },
+        ];
       });
     }
     if (mounted.current) {

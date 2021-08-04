@@ -6,7 +6,7 @@ const theme = (dark = false): any => ({
         dark: "#375a7f",
         light: "#007bff",
         hover: this.dark ? "#2f4d6c" : "#967CFF",
-        contrast: "#f8f9fa",
+        contrast: this.dark ? "#ffffff" : "#ffffff",
       };
     },
     get secondary() {

@@ -1,6 +1,5 @@
 <div id="expression-detection-custom-container">
-  <div class="tab-container animate-expression-detection-iframe">
-  </div>
+  <div class="tab-container animate-expression-detection-iframe"></div>
 
   <div class="custom-container">
     <div class="header-container">
@@ -35,23 +34,152 @@
           };
         }
 
-        const intervalTimeBetweenFramesInSeconds = 1 // 1 second
+        class VideoFrameController {
+          _frames;
+          _interval;
+          _frameIndex = 0;
+          _intervalTimeBetweenFramesInSeconds = 1;
 
-        setInterval(() => {
-          // Retrieve our custom made IFrame 
-          const iFrame = document.querySelector("#iframe-expression-detection");
-
-          // Query for "video" class inside the page to extract video (Google Meet, Microsoft Teams, etc..)
-          const video = document.querySelector("video");
-
-          // TODO: select a specific video feed if "video" is an array
-
-          // Send video frame to our custom IFrame
-          if (video) {
-            const { dataURL: frame, width, height } = captureVideo(video);
-            iFrame.contentWindow.postMessage({ type: "expression-detection.SendFrame", frame }, "*");
+          constructor() {
+            console.log("VideoFrameController");
           }
-        }, intervalTimeBetweenFramesInSeconds * 1000);
+
+          start() {
+            this._interval = setInterval(() => {
+              // Retrieve our custom made IFrame
+              const iFrame = document.querySelector(
+                "#iframe-expression-detection"
+              );
+              const frameSelected = this.frames[this.frameIndex];
+              // Send video frame to our custom IFrame
+              if (frameSelected) {
+                const {
+                  dataURL: frame,
+                  width,
+                  height,
+                } = captureVideo(frameSelected);
+                iFrame.contentWindow.postMessage(
+                  { type: "expression-detection.SendFrame", frame },
+                  "*"
+                );
+              }
+            }, this.intervalTimeBetweenFramesInSeconds * 1000);
+            return true;
+          }
+
+          stop() {
+            return clearInterval(this.interval);
+          }
+
+          get interval() {
+            return this._interval;
+          }
+
+          get frames() {
+            const videos = document.querySelectorAll("video");
+            this._frames = videos;
+            return this._frames;
+          }
+
+          get frameIndex() {
+            return this._frameIndex;
+          }
+
+          set frameIndex(index) {
+            this._frameIndex = index;
+          }
+
+          getFramesWithSnapshot() {
+            const frames = [];
+            const currentFrames = this.frames;
+            if (currentFrames) {
+              for (let index = 0; index < currentFrames.length; index++) {
+                const frameSelected = currentFrames[index];
+                const {
+                  dataURL: frame,
+                  width,
+                  height,
+                } = captureVideo(frameSelected);
+                frames.push({ frame, width, height, index });
+              }
+            }
+            return frames;
+          }
+
+          get intervalTimeBetweenFramesInSeconds() {
+            return this._intervalTimeBetweenFramesInSeconds;
+          }
+
+          set intervalTimeBetweenFramesInSeconds(interval) {
+            this._intervalTimeBetweenFramesInSeconds = interval;
+          }
+        }
+
+        class MessageEventBridge {
+          _frameWindow;
+          _window;
+          listenerWrapper;
+          _messagesMap = new Map();
+          constructor(frame) {
+            this._frameWindow = frame;
+            console.log("chrome-extension constructor", this.frameWindow);
+            let that = this;
+            this.listenerWrapper = (event) => this.listener(event, that);
+            window.addEventListener("message", this.listenerWrapper, false);
+          }
+
+          on(message, callback) {
+            this._messagesMap.set(message, callback);
+          }
+
+          listener(event, context) {
+            const callback = context._messagesMap.get(event.data.type);
+            return typeof callback === "function" ? callback(event) : true;
+          }
+
+          postMessage(message) {
+            this.frameWindow.postMessage(message, "*");
+          }
+
+          setFrameWindow(frame) {
+            this._frameWindow = frame;
+          }
+
+          get frameWindow() {
+            return this._frameWindow;
+          }
+        }
+
+        const videoFrameController = new VideoFrameController();
+        const iFrame = document.querySelector("#iframe-expression-detection");
+        const eventBridge = new MessageEventBridge(iFrame.contentWindow);
+        eventBridge.on("expression-detection.GetPossibleFrames", () => {
+          const iFrame = document.querySelector("#iframe-expression-detection");
+          iFrame.contentWindow.postMessage(
+            {
+              type: "expression-detection.GetPossibleFramesResponse",
+              frames: videoFrameController.getFramesWithSnapshot(),
+            },
+            "*"
+          );
+        });
+
+        eventBridge.on("expression-detection.SelectVideoIndex", (event) => {
+          videoFrameController.frameIndex = event.data.index;
+        });
+
+        eventBridge.on("expression-detection.StartSession", () => {
+          videoFrameController.start();
+        });
+
+        eventBridge.on("expression-detection.StopSession", () => {
+          videoFrameController.stop();
+        });
+
+        eventBridge.on("expression-detection.SetSnapshotInterval", (event) => {
+          videoFrameController.intervalTimeBetweenFramesInSeconds =
+            event.data.interval;
+        });
       </script>
     </div>
   </div>

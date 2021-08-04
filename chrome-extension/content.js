@@ -39,7 +39,7 @@ async function messageReceived(message, sender, sendResponse) {
   // Render the extension HTML/IFrame when we find that the user is on a tab 
   // which URL is one of the choosen video conference applications (Microsoft Teams, Google Meet, etc..)
   if (message.type === "expression-detection.onVideoConferenceTab") {
-    fetch(chrome.runtime.getURL("templates/index.html"))
+    return fetch(chrome.runtime.getURL("templates/index.html"))
       .then((response) => response.text())
       .then((html) => {
         const tabContainerDiv = document
