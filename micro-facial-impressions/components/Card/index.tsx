@@ -1,6 +1,6 @@
 import { Box } from "../system";
 
-const Card: React.FC<{ border?: boolean }> = ({ children, border = true }) => {
+const Card: React.FC<{ border?: boolean, css?: any }> = ({ children, border = true, ...rest }) => {
   return (
     <Box
       display="flex"
@@ -8,10 +8,12 @@ const Card: React.FC<{ border?: boolean }> = ({ children, border = true }) => {
       flexDirection="row"
       alignItems="flex-start"
       justifyContent="flex-start"
+      bg="background.card"
       borderRadius="16px"
       boxShadow="0px 0px 10px rgba(0, 0, 0, 0.08)"
       height="300px"
       width="100%"
+      {...rest}
     >
       {border && (
         <Box

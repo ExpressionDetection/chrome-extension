@@ -50,10 +50,15 @@ export default function FrameSelection() {
       height="100%"
       width="100%"
     >
-      <Text styling="bold" fontSize="md" mb="lg">Select a video to create a session:</Text>
+      <Text styling="bold" fontSize="lg" mb="lg">Select a video frame:</Text>
       {frames.map((frame) => (
-        <Card border={false}>
-          <Button styling="base" onClick={() => selectFrameIndex(frame.index)}>
+        <Card border={false} css={{
+          '&:hover': {
+            opacity: .7
+          },
+        }}>
+          <Button styling="base" display="flex" flex="1" width="100%" flexDirection="column" alignItems="flex-start" onClick={() => selectFrameIndex(frame.index)}>
+            <Text styling="bold" fontSize="md">{`Video ${frame.index}`}</Text>
             <Image
               key={`frame-${frame.index}`}
               src={frame.frame}

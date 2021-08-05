@@ -23,6 +23,7 @@ export default function CustomizedTimeline() {
   const [timeline, setTimeline] = useAtom(timelineAtom);
   const listRef = useRef<HTMLDivElement>();
   const mounted = useRef(false);
+  const sessionLastIndex = useRef(0);
 
   useEffect(() => {
     window.parent.postMessage(
@@ -40,16 +41,19 @@ export default function CustomizedTimeline() {
           {
             type: "summary",
             payload: {
-              date: new Date(),
-              image:
-                "https://static.remove.bg/remove-bg-web/8be32deab801c5299982a503e82b025fee233bd0/assets/start-0e837dcc57769db2306d8d659f53555feb500b3c5d456879b9c843d1872e7baa.jpg",
+              dataset: timeline.slice(sessionLastIndex.current).filter(i => i.type === "impression")
             },
           },
         ];
       });
+      sessionLastIndex.current = timeline.length;
     }
     if (mounted.current) {
       setTimeline(TOGGLE_LISTENER);
+      window.parent.postMessage(
+        { type: isActive ? "expression-detection.StartSession" : "expression-detection.StopSession" },
+        "*"
+      );
     }
     mounted.current = true;
   }, [isActive]);

@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Box, Text } from "../system";
+import { colors, Label } from "../system/theme/colors";
 
 const DoughnutGraph = ({ title, model }: any) => {
 
@@ -13,7 +14,7 @@ const DoughnutGraph = ({ title, model }: any) => {
       {
         label: title,
         data: model.probabilities,
-        backgroundColor: ["#1EE449", "#57BFFA", "#801CFF"],
+        backgroundColor: model.labels.map((label: Label) => colors[label]),
         hoverOffset: 4,
         spacing: 4,
         radius: 60,

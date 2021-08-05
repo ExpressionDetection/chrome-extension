@@ -7,7 +7,7 @@ const TimelineHeader = ({ toggleSession, isActive }) => {
       position="fixed"
       top="0"
       left="0"
-      bg="white"
+      bg="background.default"
       height="40px"
       width="100%"
       zIndex="999"

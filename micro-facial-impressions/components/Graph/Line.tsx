@@ -1,11 +1,12 @@
-import { Line } from "react-chartjs-2";
+import { Chart, Line } from "react-chartjs-2";
+import { Label } from "../system/theme/colors";
 
 function randomIntFromInterval(min = 0, max = 100) {
   // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-const data = {
+const dataFixed = {
   labels: ["1", "2", "3", "4", "5", "6"],
   datasets: [
     {
@@ -76,10 +77,38 @@ const options = {
       radius: 2,
     },
   },
+  plugins: {
+    tooltip: {
+      callbacks: {
+        label: (context: any) => {
+          let label = context.formattedValue || '';
+          label += "%"
+          return label
+        }
+      }
+    },
+    legend: {
+      labels: {
+        boxWidth: 16,
+        boxHeight: 1,
+        generateLabels: function (chart: any) {
+          const items = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+          for (const item of items) {
+            item.borderRadius = 1;
+          }
+          return items;
+        },
+        font: {
+          family: "Quicksand",
+          weight: 400
+        }
+      }
+    },
+  },
   scales: {
     y: {
       ticks: {
-        callback: function(value, index, values) {
+        callback: function (value: string, index, values) {
           return `${value}%`;
         },
       },
@@ -90,7 +119,9 @@ const options = {
   },
 };
 
-const LineGraph = () => {
-  return <Line data={data} options={options} />;
+const LineGraph: React.FC<{ datasets: any }> = ({ datasets }) => {
+  dataFixed.labels = datasets[0]?.data.map((_: Label, index: number) => index)
+  dataFixed.datasets = datasets;
+  return <Line data={dataFixed} options={options} />;
 };
 export default LineGraph;

@@ -3,21 +3,16 @@ const state = {
   currentUrl: null
 };
 
-function closeTab() {
-  const container = document.querySelector(".custom-container");
+function toggleTab() {
+  const container = document.querySelector(".super-container");
   if (container) {
-    container.classList.remove("animate-expression-detection-iframe");
-    container.classList.add("hide-expression-detection-iframe");
-    state.tabOpened = false;
-  }
-}
-
-function openTab() {
-  const container = document.querySelector(".custom-container");
-  if (container) {
-    container.classList.add("animate-expression-detection-iframe");
-    container.classList.remove("hide-expression-detection-iframe");
-    state.tabOpened = true;
+    const arrowLeft = document.querySelector(".tab-container .arrow-left");
+    const arrowRight = document.querySelector(".tab-container .arrow-right");
+    container.classList.remove(state.tabOpened ? "animate-expression-detection-iframe-open" : "animate-expression-detection-iframe-close");
+    container.classList.add(state.tabOpened ? "animate-expression-detection-iframe-close" : "animate-expression-detection-iframe-open");
+    arrowLeft.hidden = state.tabOpened ? false : true;
+    arrowRight.hidden = state.tabOpened ? true : false;
+    state.tabOpened = !state.tabOpened;
   }
 }
 
@@ -46,15 +41,17 @@ async function messageReceived(message, sender, sendResponse) {
           .createRange()
           .createContextualFragment(html);
         document.body.appendChild(tabContainerDiv);
-        const crossImage = document.querySelector(".header-close");
-        crossImage.src = chrome.extension.getURL("images/hamburger.svg");
-        crossImage.addEventListener("click", function() {
-          closeTab();
-        });
+        const logo = document.querySelector(".tab-container .logo");
+        logo.src = chrome.extension.getURL("images/logo.svg");
+        const arrowLeft = document.querySelector(".tab-container .arrow-left");
+        arrowLeft.src = chrome.extension.getURL("images/arrow.svg");
+        const arrowRight = document.querySelector(".tab-container .arrow-right");
+        arrowRight.src = chrome.extension.getURL("images/arrow.svg");
+        arrowRight.hidden = true;
         document
           .querySelector(".tab-container")
           .addEventListener("click", function() {
-            openTab();
+            toggleTab();
           });
         return true;
       });

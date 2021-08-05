@@ -6,6 +6,7 @@ export const styling = variant({
     base: {
       fontFamily: "Quicksand",
       fontWeight: 400,
+      color: "text.default"
     },
     get light() {
       return {

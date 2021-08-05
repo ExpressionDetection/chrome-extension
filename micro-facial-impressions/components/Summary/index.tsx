@@ -1,13 +1,35 @@
+import { memo, useMemo } from "react";
 import Card from "../Card";
 import { Line } from "../Graph";
 import { Box, Text } from "../system";
+import { colors, Label } from "../system/theme/colors";
 
 interface Props {
-  image: string;
-  date: Date;
+  dataset: any;
 }
 
-const Summary: React.FC<Props> = ({ image, date }) => {
+const getColorFromLabel = (label: Label) => {
+  return colors[label];
+}
+
+const Summary: React.FC<Props> = ({ dataset }) => {
+
+
+  const data = useMemo(() => {
+    const tempMap = new Map();
+    for (const { payload: { prediction: { aggregatedResult: { labels, probabilities } } } } of dataset) {
+      labels.forEach((label: Label, index: number) => {
+        tempMap.set(label, {
+          label,
+          data: [...tempMap.get(label)?.data ?? [], probabilities[index]],
+          backgroundColor: getColorFromLabel(label),
+          borderColor: getColorFromLabel(label)
+        })
+      })
+    }
+    return Array.from(tempMap.values());
+  }, [dataset])
+
   return (
     <Box
       m="md"
@@ -30,11 +52,11 @@ const Summary: React.FC<Props> = ({ image, date }) => {
           <Text styling="bold" size="h3">
             Session Summary
           </Text>
-          <Line />
+          <Line datasets={data} />
         </Box>
       </Card>
     </Box>
   );
 };
 
-export default Summary;
+export default memo(Summary);

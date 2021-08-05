@@ -2,6 +2,7 @@ import styled from "styled-components";
 import {
   border,
   color,
+  flexbox,
   fontSize,
   layout,
   position,
@@ -16,6 +17,7 @@ export const Button: React.FC<ButtonProps> = styled.button<ButtonProps>`
   ${styling}
   ${layout}
   ${position}
+  ${flexbox}
   ${space}
   ${typography}
   ${color}

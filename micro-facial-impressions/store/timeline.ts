@@ -62,11 +62,11 @@ export function atomWithListener<Value>(
           );
           window.removeEventListener("message", frameListenerWrapper, false);
           socket.off("predictionResponse");
-          // socket.disconnect();
+          socket.disconnect();
         } else {
           window.addEventListener("message", frameListenerWrapper, false);
           socket.on("predictionResponse", predictionListenerWrapper);
-          // connectSocketSession();
+          connectSocketSession();
         }
         // Clear any lingering images from our cache
         framesMap = new Map();
