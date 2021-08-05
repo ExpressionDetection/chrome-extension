@@ -48,7 +48,7 @@ const TimelineHeader = ({ toggleSession, isActive }) => {
           alignItems="center"
           justifyContent="flex-end"
         >
-          <Text styling="light">Stop Session</Text>
+          <Text styling="light">{isActive ? "Stop" : "Start"} Session</Text>
           <Button styling="base" p="sm" onClick={toggleSession}>
             {isActive ? (
               <img src="/pause.svg" color="black" />
