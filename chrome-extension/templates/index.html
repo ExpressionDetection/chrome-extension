@@ -7,17 +7,8 @@
     </div>
     <div class="custom-container">
       <div class="iframe-container">
-        <iframe
-          id="iframe-expression-detection"
-          class="frame"
-          src="http://localhost:3000/start"
-          frameborder="0"
-          marginwidth="0"
-          marginheight="0"
-          scrolling="auto"
-          onload=""
-          allowtransparency="false"
-        >
+        <iframe id="iframe-expression-detection" class="frame" src="http://localhost:3000/start" frameborder="0"
+          marginwidth="0" marginheight="0" scrolling="auto" onload="" allowtransparency="false">
         </iframe>
         <script text="javascript" id="iframe-script">
           function captureVideo(video) {
@@ -34,65 +25,69 @@
               height: video.videoHeight,
             };
           }
-  
+
+          function fromVideoToCanvas(video) {
+            const canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const canvasContext = canvas.getContext("2d");
+            canvasContext.drawImage(video, 0, 0);
+            return canvas;
+          }
+
           class VideoFrameController {
             _frames;
             _interval;
             _frameIndex = 0;
             _intervalTimeBetweenFramesInSeconds = 5;
-  
-            constructor() {}
-  
-            start() {
+
+            constructor() { }
+
+            start(canvasCreator) {
               console.log("VideoFrameController::start")
               this._interval = setInterval(() => {
                 // Retrieve our custom made IFrame
                 const iFrame = document.querySelector(
                   "#iframe-expression-detection"
                 );
-                const frameSelected = this.frames[this.frameIndex];
+                // const frameSelected = this.frames[this.frameIndex];
                 // Send video frame to our custom IFrame
-                if (frameSelected) {
-                  const {
-                    dataURL: frame,
-                    width,
-                    height,
-                  } = captureVideo(frameSelected);
+                const canvas = canvasCreator();
+                if (canvas) {
                   iFrame.contentWindow.postMessage(
-                    { type: "expression-detection.SendFrame", frame },
+                    { type: "expression-detection.SendFrame", frame: canvas.toDataURL("image/png"), width: canvas.width, height: canvas.height },
                     "*"
                   );
                 }
               }, this.intervalTimeBetweenFramesInSeconds * 1000);
               return true;
             }
-  
+
             stop() {
               console.log("VideoFrameController::stop")
               return clearInterval(this.interval);
             }
-  
+
             get interval() {
               return this._interval;
             }
-  
+
             get frames() {
               const videos = document.querySelectorAll("video");
               this._frames = videos;
               return this._frames;
             }
-  
+
             get frameIndex() {
               return this._frameIndex;
             }
-  
+
             set frameIndex(index) {
               this._frameIndex = index;
             }
-  
-            getFramesWithSnapshot() {
+
+            getFramesWithSnapshot(currentFrames) {
               const frames = [];
-              const currentFrames = this.frames;
               if (currentFrames) {
                 for (let index = 0; index < currentFrames.length; index++) {
                   const frameSelected = currentFrames[index];
@@ -101,22 +96,78 @@
                     width,
                     height,
                   } = captureVideo(frameSelected);
-                  console.log("frame", frame)
                   frames.push({ frame, width, height, index });
                 }
               }
               return frames;
             }
-  
+
             get intervalTimeBetweenFramesInSeconds() {
               return this._intervalTimeBetweenFramesInSeconds;
             }
-  
+
             set intervalTimeBetweenFramesInSeconds(interval) {
               this._intervalTimeBetweenFramesInSeconds = interval;
             }
           }
-  
+
+          class MeetViedeoFrameController extends VideoFrameController {
+            constructor() {
+              super();
+            }
+
+            start() {
+              return super.start(() => {
+                return fromVideoToCanvas(this.frames[this.frameIndex])
+              })
+            }
+
+            getFramesWithSnapshot() {
+              return super.getFramesWithSnapshot(this.frames)
+            }
+          }
+
+          class ZoomViedeoFrameController extends VideoFrameController {
+            constructor() {
+              super();
+            }
+
+            start() {
+              return super.start(() => this.frames[this.frameIndex])
+            }
+
+            get frames() {
+              const canvas = document.querySelectorAll("canvas")
+              return canvas
+            }
+
+            getFramesWithSnapshot() {
+              const frames = this.frames;
+              const result = []
+              for (let index = 0; index < frames.length; index++) {
+                const canvas = frames[index]
+                result.push({ frame: canvas.toDataURL("image/png"), index })
+              }
+              return result
+            }
+          }
+
+          class TeamsViedeoFrameController extends VideoFrameController {
+            constructor() {
+              super();
+            }
+
+            start() {
+              return super.start(() => {
+                return fromVideoToCanvas(this.frames[this.frameIndex])
+              })
+            }
+
+            getFramesWithSnapshot() {
+              return super.getFramesWithSnapshot(this.frames)
+            }
+          }
+
           class MessageEventBridge {
             _frameWindow;
             _window;
@@ -129,30 +180,54 @@
               this.listenerWrapper = (event) => this.listener(event, that);
               window.addEventListener("message", this.listenerWrapper, false);
             }
-  
+
             on(message, callback) {
               this._messagesMap.set(message, callback);
             }
-  
+
             listener(event, context) {
               const callback = context._messagesMap.get(event.data.type);
               return typeof callback === "function" ? callback(event) : true;
             }
-  
+
             postMessage(message) {
               this.frameWindow.postMessage(message, "*");
             }
-  
+
             setFrameWindow(frame) {
               this._frameWindow = frame;
             }
-  
+
             get frameWindow() {
               return this._frameWindow;
             }
           }
-  
-          const videoFrameController = new VideoFrameController();
+
+          const siteMatcher = new Map()
+          siteMatcher.set("zoom", {
+            type: "zoom",
+            test: (text) => /zoom\.us/ig.test(text),
+            Controller: ZoomViedeoFrameController
+          })
+          siteMatcher.set("meet", {
+            type: "meet",
+            test: (text) => /meet\.google\.com/ig.test(text),
+            Controller: MeetViedeoFrameController
+          })
+          siteMatcher.set("teams", {
+            type: "teams",
+            test: (text) => /teams\.live\.com/ig.test(text),
+            Controller: TeamsViedeoFrameController
+          })
+
+          let site;
+          for (siteValue of siteMatcher.values()) {
+            if (siteValue.test(window.location.hostname)) {
+              site = siteValue
+            }
+          }
+
+          const videoFrameController = new site.Controller();
           const iFrame = document.querySelector("#iframe-expression-detection");
           const eventBridge = new MessageEventBridge(iFrame.contentWindow);
           eventBridge.on("expression-detection.GetPossibleFrames", () => {
@@ -165,19 +240,19 @@
               "*"
             );
           });
-  
+
           eventBridge.on("expression-detection.SelectVideoIndex", (event) => {
             videoFrameController.frameIndex = event.data.index;
           });
-  
+
           eventBridge.on("expression-detection.StartSession", () => {
             videoFrameController.start();
           });
-  
+
           eventBridge.on("expression-detection.StopSession", () => {
             videoFrameController.stop();
           });
-  
+
           eventBridge.on("expression-detection.SetSnapshotInterval", (event) => {
             videoFrameController.intervalTimeBetweenFramesInSeconds =
               event.data.interval;

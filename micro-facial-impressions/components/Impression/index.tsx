@@ -2,6 +2,7 @@ import format from "date-fns/format";
 import Card from "../Card";
 import DoughnutGraph from "../DoughnutGraph";
 import { Box, Image, Text } from "../system";
+import ImageTag from "./ImageTag";
 
 const Impression = (payload: any) => {
   const image = payload.image
@@ -19,13 +20,7 @@ const Impression = (payload: any) => {
     >
       <Card>
         <Box display="flex" flex="1" flexDirection="column" p="16px">
-          <Image
-            src={image}
-            width={1}
-            display="flex"
-            flex={1}
-            borderRadius="16px"
-          />
+          <ImageTag image={image} />
           <Box
             flex="1"
             display="grid"
