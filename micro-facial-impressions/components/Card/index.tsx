@@ -10,7 +10,7 @@ const Card: React.FC<{ border?: boolean, css?: any }> = ({ children, border = tr
       justifyContent="flex-start"
       bg="background.card"
       borderRadius="16px"
-      boxShadow="0px 0px 10px rgba(0, 0, 0, 0.08)"
+      boxShadow="default"
       height="300px"
       width="100%"
       {...rest}

@@ -1,5 +1,5 @@
 import colors from './colors'
-import { breakpoints, fontSizes, fontWeights, radii, space } from './sizes'
+import { breakpoints, fontSizes, fontWeights, radii, space, shadows } from './sizes'
 
 const theme = {
   breakpoints,
@@ -7,6 +7,7 @@ const theme = {
   fontWeights,
   radii,
   space,
+  shadows,
   colors: colors()
 }
 

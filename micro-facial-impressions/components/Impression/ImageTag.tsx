@@ -27,7 +27,7 @@ const ImageTag = ({ image }) => {
             src={image}
             width="100%"
             flex={1}
-            opacity={hovered ? 0.5 : 1}
+            opacity={hovered ? 0.2 : 1}
             borderRadius="16px"
         />
         {hovered && <Box position="absolute" display="flex" flexWrap="wrap" flexDirection="row" height="100%" alignItems="center" justifyContent="center">

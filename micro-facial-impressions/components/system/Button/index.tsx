@@ -6,6 +6,7 @@ import {
   fontSize,
   layout,
   position,
+  shadow,
   space,
   system,
   typography,
@@ -21,6 +22,7 @@ export const Button: React.FC<ButtonProps> = styled.button<ButtonProps>`
   ${space}
   ${typography}
   ${color}
+  ${shadow}
   ${border}
   ${fontSize}
   ${sizes}

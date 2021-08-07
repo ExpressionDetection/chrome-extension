@@ -10,6 +10,7 @@ export interface ButtonProps extends ButtonStyledProps {
   size?: 'small' | 'medium' | 'large'
   outline?: boolean
   disabled?: boolean
+  boxShadow?: string
   text?: boolean
   block?: boolean
   css?: CSSProp

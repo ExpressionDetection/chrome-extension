@@ -1,8 +1,9 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { atom, useAtom } from "jotai";
 
+const debounce = require('lodash/debounce')
 import { atomWithListener, TOGGLE_LISTENER } from "../store/timeline";
-import { Box } from "../components/system";
+import { Box, Button } from "../components/system";
 import { TimelineHeader, TimelineItem } from "../components/timeline";
 
 const timelineAtom = atomWithListener([
@@ -21,6 +22,7 @@ const active = atom(true);
 export default function CustomizedTimeline() {
   const [isActive, setActive] = useAtom(active);
   const [timeline, setTimeline] = useAtom(timelineAtom);
+  const [isAtBottom, setIsAtBottom] = useState(false);
   const listRef = useRef<HTMLDivElement>();
   const mounted = useRef(false);
   const sessionLastIndex = useRef(0);
@@ -31,6 +33,34 @@ export default function CustomizedTimeline() {
       "*"
     );
   }, []);
+
+  const scrollToBottom = () => {
+    window.scrollTo({
+      behavior: "smooth",
+      top: listRef.current?.scrollHeight,
+    })
+  }
+
+  useEffect(() => {
+    if (isAtBottom) {
+      setTimeout(() => {
+        scrollToBottom();
+      }, 50);
+    }
+
+    console.log("inside scrolled")
+    const onScroll = debounce(() => {
+      const bottom = Math.ceil(window.innerHeight + window.scrollY) >= listRef.current?.scrollHeight
+      console.log('at the bottom', bottom);
+      setIsAtBottom(bottom)
+    }, 100, {
+      trailing: true,
+      leading: false
+    });
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [timeline, isAtBottom, setIsAtBottom]);
 
   useEffect(() => {
     if (!isActive) {
@@ -58,14 +88,6 @@ export default function CustomizedTimeline() {
     mounted.current = true;
   }, [isActive]);
 
-  useEffect(() => {
-    if (listRef.current) {
-      setTimeout(() => {
-        listRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
-      }, 50);
-    }
-  }, [timeline]);
-
   return (
     <>
       <TimelineHeader
@@ -80,10 +102,14 @@ export default function CustomizedTimeline() {
         p="sm"
         height="100%"
         width="100%"
+        position="relative"
       >
         {timeline.map((item: any, index: number) => (
           <TimelineItem {...item} key={index} />
         ))}
+        {!isAtBottom && <Button bg="background.card" onClick={scrollToBottom} width="40px" height="40px" borderRadius="20px" styling="base" display="flex" position="fixed" bottom="16px" right="16px" justifyContent="center" alignItems="center" boxShadow="default">
+          <img src="/arrow-down.svg" color="black" width={16} height={16} />
+        </Button>}
       </Box>
     </>
   );

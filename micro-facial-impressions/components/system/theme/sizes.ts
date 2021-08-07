@@ -39,3 +39,7 @@ export const radii = {
   md: "0.25rem",
   lg: "0.3rem",
 };
+
+export const shadows = {
+  default: "0px 0px 10px rgba(0, 0, 0, 0.08)"
+}
