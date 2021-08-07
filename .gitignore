@@ -32,3 +32,5 @@
 
 # vercel
 /micro-facial-impressions/.vercel
+
+.ssh
