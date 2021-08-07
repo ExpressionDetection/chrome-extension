@@ -24,7 +24,7 @@ socket.on("session", ({ sessionID, userID }: any) => {
 });
 
 socket.on("connect_error", (err: any) => {
-  console.log("SocketIO: Session Error on Connect: ", err)
+  // console.log("SocketIO: Session Error on Connect: ", err)
 });
 
 socket.on("disconnect", () => {
