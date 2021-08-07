@@ -18,7 +18,7 @@ socket.on("session", ({ sessionID, userID }: any) => {
   // attach the session ID to the next reconnection attempts
   // socket.auth = { sessionID }; 
   // store it in the localStorage
-  localStorage.setItem("socketioSessionId", sessionID);
+  //localStorage.setItem("socketioSessionId", sessionID);
   // save the ID of the user
   socket.userID = userID;
 });
@@ -32,7 +32,7 @@ socket.on("disconnect", () => {
 });
 
 function connectSocketSession() {
-  const sessionID = localStorage.getItem("socketioSessionId");
+  // const sessionID = localStorage.getItem("socketioSessionId");
   //socket.auth = { sessionID }; TODO: Find a way to send session on v2.3.0
 
   console.log("SocketIO: Connect request");
