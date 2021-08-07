@@ -1,6 +1,6 @@
 import { atom, PrimitiveAtom } from "jotai";
 import { v4 as uuidv4 } from 'uuid';
-import { socket, connectSocketSession } from "../socketio";
+import { socket } from "../socketio";
 
 export const TOGGLE_LISTENER = Symbol();
 
@@ -62,11 +62,11 @@ export function atomWithListener<Value>(
           );
           window.removeEventListener("message", frameListenerWrapper, false);
           socket.off("predictionResponse");
-          socket.disconnect();
+          // socket.disconnect();
         } else {
           window.addEventListener("message", frameListenerWrapper, false);
           socket.on("predictionResponse", predictionListenerWrapper);
-          connectSocketSession();
+          // connectSocketSession(); 
         }
         // Clear any lingering images from our cache
         framesMap = new Map();
@@ -90,8 +90,6 @@ export function atomWithListener<Value>(
     // Catching predictions from inference requests
     predictionListenerWrapper = (data) => predictionListener(data, setAtom);
     socket.on("predictionResponse", predictionListenerWrapper);
-
-    connectSocketSession();
 
     return () => {
       window.removeEventListener("message", frameListenerWrapper);

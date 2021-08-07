@@ -24,7 +24,7 @@ socket.on("session", ({ sessionID, userID }: any) => {
 });
 
 socket.on("connect_error", (err: any) => {
-  // console.log("SocketIO: Session Error on Connect: ", err)
+  // console.log("SocketIO: Session Error on Connect: ", err) 
 });
 
 socket.on("disconnect", () => {
@@ -34,8 +34,13 @@ socket.on("disconnect", () => {
 function connectSocketSession() {
   const sessionID = localStorage.getItem("socketioSessionId");
   //socket.auth = { sessionID }; TODO: Find a way to send session on v2.3.0
+
+  console.log("SocketIO: Connect request");
   
   socket.connect();
 }
+
+connectSocketSession();
+
 
 export { socket, connectSocketSession };
